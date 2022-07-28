@@ -19,8 +19,9 @@ int print_int_array(array* arr) {
     printf("\b \b]\n");
     return 0;
 }
-array* scrstr;
+array* scrstr = NULL;
 int scr_init(void) {
+    if (scrstr) return 0;
     scrstr = array_init(sizeof(char));
     if (!scrstr) {
         return -1;
@@ -60,6 +61,33 @@ struct widget scr_std(void) {
     wid.lx = scr_winsize().ws_col;
     wid.ly = scr_winsize().ws_row;
     return wid;
+}
+int rcolor(int c) {
+    array* str = fcolor(c);
+    if (!str) {
+        return -1;
+    }
+    array_append(scrstr, str);
+    array_drop(&str);
+    return 0;
+}
+int rrcolor(array* c) {
+    array* str = frcolor(c);
+    if (!str) {
+        return -1;
+    }
+    array_append(scrstr, str);
+    array_drop(&str);
+    return 0;
+}
+int rmove(int x, int y) {
+    array* str = fmove(x, y);
+    if (!str) {
+        return -1;
+    }
+    array_append(scrstr, str);
+    array_drop(&str);
+    return 0;
 }
 array* fcolor(int c) {
     array* arr = array_init(sizeof(char));
@@ -110,7 +138,7 @@ array* widget_fill(struct widget wid, char* c) {
             array_drop(&cstr);
         }
     }
-    array_append(scrstr, arr);
+    // array_append(scrstr, arr);
     return arr;
 }
 array* widget_box(struct widget wid, struct widget_box box) {
@@ -214,7 +242,7 @@ array* widget_box(struct widget wid, struct widget_box box) {
         array_drop(&temp);
         array_drop(&cstr);
     }
-    array_append(scrstr, arr);
+    // array_append(scrstr, arr);
     return arr;
 }
 array* widget_content(struct widget wid, struct widget_content_format format) {
@@ -267,6 +295,33 @@ array* widget_content(struct widget wid, struct widget_content_format format) {
             array_drop(&cstr);
         }
     }
-    array_append(scrstr, arr);
+    // array_append(scrstr, arr);
     return arr;
+}
+int widget_rfill(struct widget wid, char* c) {
+    array* str = widget_fill(wid, c);
+    if (!str) {
+        return -1;
+    }
+    array_append(scrstr, str);
+    array_drop(&str);
+    return 0;
+}
+int widget_rbox(struct widget wid, struct widget_box box) {
+    array* str = widget_box(wid, box);
+    if (!str) {
+        return -1;
+    }
+    array_append(scrstr, str);
+    array_drop(&str);
+    return 0;
+}
+int widget_rcontent(struct widget wid, struct widget_content_format format) {
+    array* str = widget_content(wid, format);
+    if (!str) {
+        return -1;
+    }
+    array_append(scrstr, str);
+    array_drop(&str);
+    return 0;
 }
